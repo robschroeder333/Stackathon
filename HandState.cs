@@ -6,9 +6,9 @@ using Leap;
 public class HandState : MonoBehaviour {
 
 	private HandModel HM;
-	private Hand hand;
+	public Hand hand;
 
-	public bool IsFist (Hand hand) {
+	public bool IsFist () {
 		for (int f = 0; f < hand.Fingers.Count; f++) {
 			Finger digit = hand.Fingers [f];
 			if (digit.IsExtended) {
@@ -22,7 +22,7 @@ public class HandState : MonoBehaviour {
 		HM = this.gameObject.GetComponent<HandModel>();
 	}
 
-	void FixedUpdate () {
+	void Update () {
 		hand = HM.GetLeapHand();
 	}
 }

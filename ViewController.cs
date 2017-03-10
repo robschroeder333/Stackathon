@@ -6,28 +6,36 @@ using Leap;
 public class ViewController : MonoBehaviour {
 
 // script imports
-private HandController HandControllerScript;
-private HandState HandStateScript1;
-private HandState HandStateScript2;
+// private HandController HandControllerScript;
+// private SkeletalHand SkeletalHandScript1;
+private HandState handScriptL;
+private HandState handScriptR;
 
 // var declaration
-private GameObject handController;
-private HandModel hand1;
-private HandModel hand2;
-
+// private GameObject handController;
+private GameObject handL;
+private GameObject handR;
+private Vector3 leftPos;
+private Vector3 rightPos;
 
 /*TODO:
-	get component of each to access the function (nest within function and only
-	 call if they exist)
+	get magnitude between the two hands
 
-	if both return true then get the values of positions
-	and continue working
+	relate magnitude to scale of cube
+
+
 */
 
 
+float roundToDecimalPlace(float num, float decimalPlace) {
+  float processor = Mathf.Pow(10, decimalPlace);
+  num = (num * processor);
+  return Mathf.Round(num) / processor;
+}
+
 	void Awake () {
-		handController = GameObject.Find("HandController");
-		HandControllerScript = handController.GetComponent<HandController>() as HandController;
+		// handController = GameObject.Find("HandController");
+		// HandControllerScript = handController.GetComponent<HandController>() as HandController;
 	}
 	void Start () {
 
@@ -36,13 +44,32 @@ private HandModel hand2;
 	// Update is called once per frame
 	void Update () {
 
-		// hand1 = HandControllerScript.GetAllGraphicsHands()[0];
-		// hand2 = HandControllerScript.GetAllGraphicsHands()[1];
-		HandStateScript1 = hand1.GetComponent<HandState>() as HandState;
-		HandStateScript2 = hand2.GetComponent<HandState>() as HandState;
+			handL = GameObject.Find("GlowRobotLeftHand(Clone)");
+			handR = GameObject.Find("GlowRobotRightHand(Clone)");
 
+		if (handL) {
+			handScriptL = handL.GetComponent<HandState>() as HandState;
+		}
+		if (handR) {
+			handScriptR = handR.GetComponent<HandState>() as HandState;
+		}
 
-		// Debug.Log(hand2.transform.position);
+		if (handL && handR) {
+			if (handScriptL.IsFist() && handScriptR.IsFist()) {
+				leftPos = new Vector3(
+					roundToDecimalPlace(handScriptL.hand.PalmPosition.x, 2),
+					roundToDecimalPlace(handScriptL.hand.PalmPosition.y, 2),
+					roundToDecimalPlace(handScriptL.hand.PalmPosition.z, 2));
+				rightPos = new Vector3(
+					roundToDecimalPlace(handScriptR.hand.PalmPosition.x, 2),
+					roundToDecimalPlace(handScriptR.hand.PalmPosition.y, 2),
+					roundToDecimalPlace(handScriptR.hand.PalmPosition.z, 2));
+
+				Debug.Log(leftPos);
+				Debug.Log(rightPos);
+			}
+		}
+
 
 	}
 }
