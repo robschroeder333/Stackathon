@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Leap;
-// using Leap.Unity;
 
 public class HandState : MonoBehaviour {
 
@@ -19,12 +18,11 @@ public class HandState : MonoBehaviour {
 		return true;
 	}
 
-	void Start () {
+	void Awake () {
 		HM = this.gameObject.GetComponent<HandModel>();
 	}
 
 	void FixedUpdate () {
 		hand = HM.GetLeapHand();
-		Debug.Log(IsFist(hand));
 	}
 }
