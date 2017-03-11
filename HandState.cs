@@ -9,13 +9,17 @@ public class HandState : MonoBehaviour {
 	public Hand hand;
 
 	public bool IsFist () {
+		int counter = 0;
 		for (int f = 0; f < hand.Fingers.Count; f++) {
 			Finger digit = hand.Fingers [f];
-			if (digit.IsExtended) {
-					return false;
+			if (!digit.IsExtended) {
+					counter++;
 			}
 		}
-		return true;
+		if (counter >= 4) {
+			return true;
+		}
+		return false;
 	}
 
 	void Awake () {

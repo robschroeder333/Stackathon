@@ -17,11 +17,18 @@ private GameObject handL;
 private GameObject handR;
 private Vector3 leftPos;
 private Vector3 rightPos;
+private bool isStartDist;
+public float startDist;
+public float currentDist;
+private GameObject gameCube;
+private bool shouldUpdateGameCube;
 
 /*TODO:
-	get magnitude between the two hands
+	rotate cube
 
-	relate magnitude to scale of cube
+	shift cube
+
+	create better model for cube
 
 
 */
@@ -33,12 +40,12 @@ float roundToDecimalPlace(float num, float decimalPlace) {
   return Mathf.Round(num) / processor;
 }
 
-	void Awake () {
-		// handController = GameObject.Find("HandController");
-		// HandControllerScript = handController.GetComponent<HandController>() as HandController;
-	}
+	// void Awake () {
+	// 	// handController = GameObject.Find("HandController");
+	// 	// HandControllerScript = handController.GetComponent<HandController>() as HandController;
+	// }
 	void Start () {
-
+		gameCube = GameObject.Find("GameSpace");
 	}
 
 	// Update is called once per frame
@@ -57,16 +64,27 @@ float roundToDecimalPlace(float num, float decimalPlace) {
 		if (handL && handR) {
 			if (handScriptL.IsFist() && handScriptR.IsFist()) {
 				leftPos = new Vector3(
-					roundToDecimalPlace(handScriptL.hand.PalmPosition.x, 2),
-					roundToDecimalPlace(handScriptL.hand.PalmPosition.y, 2),
-					roundToDecimalPlace(handScriptL.hand.PalmPosition.z, 2));
+					handScriptL.hand.PalmPosition.x,
+					handScriptL.hand.PalmPosition.y,
+					handScriptL.hand.PalmPosition.z
+				);
 				rightPos = new Vector3(
-					roundToDecimalPlace(handScriptR.hand.PalmPosition.x, 2),
-					roundToDecimalPlace(handScriptR.hand.PalmPosition.y, 2),
-					roundToDecimalPlace(handScriptR.hand.PalmPosition.z, 2));
-
-				Debug.Log(leftPos);
-				Debug.Log(rightPos);
+					handScriptR.hand.PalmPosition.x,
+					handScriptR.hand.PalmPosition.y,
+					handScriptR.hand.PalmPosition.z
+				);
+				if (isStartDist) {
+					startDist = Vector3.Distance(leftPos, rightPos);
+					isStartDist = false;
+					shouldUpdateGameCube = true;
+				} else {
+					currentDist = Vector3.Distance(leftPos, rightPos);
+					float cubeScale = (currentDist-startDist)/100f;
+					startDist = currentDist;
+					gameCube.transform.localScale += new Vector3(cubeScale,cubeScale,cubeScale);
+				}
+			} else {
+				isStartDist = true;
 			}
 		}
 
