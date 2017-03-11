@@ -18,13 +18,16 @@ private GameObject handR;
 private Vector3 leftPos;
 private Vector3 rightPos;
 private bool isStartDist;
-public float startDist;
-public float currentDist;
+private float startDist;
+private float currentDist;
 private GameObject gameCube;
 private bool shouldUpdateGameCube;
+public float scaleRate = 50f;
 
 /*TODO:
 	rotate cube
+		conflict in order of vectors passed (hands first = y rotation correct
+		but z rotation reversed, hands second = y reversed but z correct)
 
 	shift cube
 
@@ -34,11 +37,6 @@ private bool shouldUpdateGameCube;
 */
 
 
-float roundToDecimalPlace(float num, float decimalPlace) {
-  float processor = Mathf.Pow(10, decimalPlace);
-  num = (num * processor);
-  return Mathf.Round(num) / processor;
-}
 
 	// void Awake () {
 	// 	// handController = GameObject.Find("HandController");
@@ -73,16 +71,10 @@ float roundToDecimalPlace(float num, float decimalPlace) {
 					handScriptR.hand.PalmPosition.y,
 					handScriptR.hand.PalmPosition.z
 				);
-				if (isStartDist) {
-					startDist = Vector3.Distance(leftPos, rightPos);
-					isStartDist = false;
-					shouldUpdateGameCube = true;
-				} else {
-					currentDist = Vector3.Distance(leftPos, rightPos);
-					float cubeScale = (currentDist-startDist)/100f;
-					startDist = currentDist;
-					gameCube.transform.localScale += new Vector3(cubeScale,cubeScale,cubeScale);
-				}
+
+				// HandleScaling();
+				HandleRotation();
+
 			} else {
 				isStartDist = true;
 			}
@@ -90,4 +82,31 @@ float roundToDecimalPlace(float num, float decimalPlace) {
 
 
 	}
+
+	float roundToDecimalPlace (float num, float decimalPlace) {
+		float processor = Mathf.Pow(10, decimalPlace);
+		num = (num * processor);
+		return Mathf.Round(num) / processor;
+	}
+
+	void HandleScaling () {
+		if (isStartDist) {
+			startDist = Vector3.Distance(leftPos, rightPos);
+			isStartDist = false;
+			shouldUpdateGameCube = true;
+		} else {
+			currentDist = Vector3.Distance(leftPos, rightPos);
+			float cubeScale = (currentDist-startDist)/scaleRate;
+			startDist = currentDist;
+			gameCube.transform.localScale += new Vector3(cubeScale,cubeScale,cubeScale);
+		}
+	}
+
+	void HandleRotation () {
+		gameCube.transform.rotation = Quaternion.FromToRotation(
+			(rightPos - leftPos),Vector3.right
+		);
+	}
+
+
 }
